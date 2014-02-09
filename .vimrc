@@ -5,6 +5,8 @@ syntax on
 filetype on
 filetype plugin indent on
 let mapleader=","
+nmap <S-Tab> <<
+imap <S-Tab> <Esc><<i
 
 color desert
 
@@ -47,6 +49,7 @@ let g:pep8_map='<leader>8'
 
 au FileType python set omnifunc=pythoncomplete#Complete
 let g:SuperTabDefaultCompletionType="context"
+let g:SuperTabDefaultCompletionType="<c-n>"
 set completeopt=menuone,longest,preview
 
 " Function to activate a virtualenv in the embedded interpreter for
