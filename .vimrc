@@ -33,9 +33,8 @@ map <c-h> <c-w>h
 map <leader>td <Plug>TaskList
 map <leader>g :GundoToggle<CR>
 map <leader>n :NERDTreeToggle<CR>
-map <c-g> :RopeGoToDefinition<CR>
-map <leader>r :RopeRename<CR>
 map <leader>a <Esc>:Ack!
+let g:pep8_map='<leader>8'
 au filetype python map <leader>dt :set makeprg=django-admin.py\ test\|:call MakeGreen()<CR>
 
 " Execute the tests
@@ -47,17 +46,16 @@ au filetype python nmap <silent><Leader>tn <Esc>:Pytest next<CR>
 au filetype python nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
 au filetype python nmap <silent><Leader>te <Esc>:Pytest error<CR>
 
-set statusline=%t[%{strlen(&fenc)?&fenc:'none'},%{&ff}]%h%m%r%y%=%c,%l/%L\ %P
-set statusline+=%{fugitive#statusline()}
 
-let g:pep8_map='<leader>8'
-let g:pyflakes_use_quickfix = 0
 let g:CommandTCancelMap='<Esc>'
 
 au FileType python set omnifunc=pythoncomplete#Complete
 let g:SuperTabDefaultCompletionType="context"
 let g:SuperTabDefaultCompletionType="<c-n>"
 set completeopt=menuone,longest,preview
+
+let g:pymode_folding=0
+let g:pymode_lint_checkers=['pylint', 'pyflakes', 'pep8', 'mccabe']
 
 py << EOF
 import os.path
