@@ -11,18 +11,22 @@ color ansi_blows
 set ts=4
 au filetype html set ts=2
 au filetype htmldjango set ts=2
+au filetype javascript set ts=2
 set shiftwidth=4
 au filetype html set shiftwidth=2
 au filetype htmldjango set shiftwidth=2
+au filetype javascript set shiftwidth=2
 set nu!
 au filetype python set expandtab
 au filetype html set expandtab
 au filetype htmldjango set expandtab
+au filetype javascript set expandtab
 set smarttab
 au filetype python set textwidth=119
 set softtabstop=4
 au filetype html set softtabstop=2
 au filetype htmldjango set softtabstop=2
+au filetype javascript set softtabstop=2
 set shiftround
 set autoindent
 set foldmethod=indent
@@ -49,11 +53,6 @@ au filetype python nmap <silent><Leader>te <Esc>:Pytest error<CR>
 
 
 let g:CommandTCancelMap='<Esc>'
-
-au FileType python set omnifunc=pythoncomplete#Complete
-let g:SuperTabDefaultCompletionType="context"
-let g:SuperTabDefaultCompletionType="<c-n>"
-set completeopt=menuone,longest,preview
 
 let g:pymode_folding=0
 let g:pymode_lint_checkers=['pylint', 'pyflakes', 'pep8', 'mccabe']
