@@ -1,6 +1,36 @@
-filetype off
-call pathogen#infect()
-call pathogen#helptags()
+set nocompatible
+filetype off 
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'gmarik/Vundle.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-git'
+Plugin 'wincent/command-t'
+Plugin 'mileszs/ack.vim'
+Plugin 'sjl/gundo.vim'
+Plugin 'fs111/pydoc.vim'
+Plugin 'alfredodeza/pytest.vim'
+Plugin 'reinh/vim-makegreen'
+Plugin 'vim-scripts/TaskList.vim'
+Plugin 'vim-scripts/The-NERD-tree'
+Plugin 'garbas/vim-snipmate'
+Plugin 'tomtom/tlib_vim'
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'honza/vim-snippets'
+Plugin 'lambdalisue/vim-python-virtualenv'
+Plugin 'klen/python-mode'
+Plugin 'bling/vim-airline'
+Plugin 'fholgado/minibufexpl.vim'
+Plugin 'kchmck/vim-coffee-script'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'ervandew/supertab'
+Plugin 'Lokaltog/vim-easymotion'
+Plugin 'scrooloose/syntastic'
+Plugin 'tpope/vim-repeat'
+Plugin 'davidhalter/jedi-vim'
+call vundle#end()
+
 syntax on
 filetype on
 filetype indent plugin on
@@ -31,14 +61,17 @@ set shiftround
 set autoindent
 set foldmethod=indent
 set foldlevel=99
+
 map <c-j> <c-w>j
 map <c-k> <c-w>k
 map <c-l> <c-w>l
 map <c-h> <c-w>h
+
 map <leader>td <Plug>TaskList
-map <leader>g :GundoToggle<CR>
-map <leader>n :NERDTreeToggle<CR>
+map <leader>u :GundoToggle<CR>
+map <leader>tt :NERDTreeToggle<CR>
 map <leader>a <Esc>:Ack!
+
 let g:pep8_map='<leader>8'
 au filetype python map <leader>dt :set makeprg=django-admin.py\ test\|:call MakeGreen()<CR>
 
@@ -51,11 +84,23 @@ au filetype python nmap <silent><Leader>tn <Esc>:Pytest next<CR>
 au filetype python nmap <silent><Leader>tp <Esc>:Pytest previous<CR>
 au filetype python nmap <silent><Leader>te <Esc>:Pytest error<CR>
 
-
 let g:CommandTCancelMap='<Esc>'
+
+let g:jedi#use_tabs_not_buffers=0
+
+au FileType python set omnifunc=pythoncomplete#Complete
+let g:SuperTabDefaultCompletionType="context"
+let g:SuperTabClosePreviewOnPopupClose=1
+set completeopt=menuone,longest,preview
+autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+autocmd BufReadPost *.py call SyntasticCheck()
 
 let g:pymode_folding=0
 let g:pymode_lint_checkers=['pylint', 'pyflakes', 'pep8', 'mccabe']
+let g:pymode_rope=0
+let g:syntastic_python_checkers=['python', 'pyflakes', 'pep8', 'flake8']
 
 py << EOF
 import os.path
