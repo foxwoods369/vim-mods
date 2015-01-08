@@ -87,7 +87,7 @@ map <leader>u :GundoToggle<CR>
 map <leader>tt :NERDTreeToggle<CR>
 map <leader>a <Esc>:Ack!
 
-let g:pep8_map='<leader>8'
+" let g:pep8_map='<leader>8'
 au filetype python map <leader>dt :set makeprg=django-admin.py\ test\|:call MakeGreen()<CR>
 
 " Execute the tests
@@ -129,7 +129,7 @@ let g:UltiSnipsSnippetsDir = '~/.vim/ultisnips'
 autocmd BufReadPost *.py call SyntasticCheck()
 
 let g:pymode_folding=0
-let g:pymode_lint_checkers=['pyflakes', 'pep8']
+let g:pymode_lint_checkers=['pyflakes', 'pep8', 'pylint', 'mccabe']
 let g:pymode_rope=0
 let g:syntastic_python_checkers=['python', 'pyflakes', 'pep8', 'flake8']
 
