@@ -14,7 +14,7 @@ Plugin 'alfredodeza/pytest.vim'
 Plugin 'reinh/vim-makegreen'
 Plugin 'vim-scripts/TaskList.vim'
 Plugin 'vim-scripts/The-NERD-tree'
-Plugin 'garbas/vim-snipmate'
+" Plugin 'garbas/vim-snipmate'
 Plugin 'tomtom/tlib_vim'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'honza/vim-snippets'
@@ -28,15 +28,30 @@ Plugin 'ervandew/supertab'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-repeat'
-Plugin 'davidhalter/jedi-vim'
+" Plugin 'davidhalter/jedi-vim'
+Plugin 'valloric/youcompleteme'
+Plugin 'SirVer/ultisnips'
+Plugin 'jmcomets/vim-pony'
 call vundle#end()
 
 syntax on
 filetype on
 filetype indent plugin on
 let mapleader=","
+set hidden
+set history=50
+set hlsearch
+set mouse=a
+set showmatch
+set textwidth=0
+set wrap
+set bs=indent,eol,start
 
 color ansi_blows
+
+let g:pyindent_open_paren = '&sw'
+let g:pyindent_nested_paren = '&sw'
+let g:pyindent_continue = '&sw'
 
 set ts=4
 au filetype html set ts=2
@@ -89,16 +104,32 @@ let g:CommandTCancelMap='<Esc>'
 let g:jedi#use_tabs_not_buffers=0
 
 au FileType python set omnifunc=pythoncomplete#Complete
-let g:SuperTabDefaultCompletionType="context"
+let g:SuperTabDefaultCompletionType="<C-n>"
 let g:SuperTabClosePreviewOnPopupClose=1
+let g:SuperTabCrMapping = 0
+"autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 set completeopt=menuone,longest,preview
-autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifers_with_syntax = 1
+let g:ycm_complete_in_comments = 1
+let g:ycm_complete_in_strings = 1 
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+nnoremap <leader>g :YcmCompleter GoTo<CR>
+
+let g:UltiSnipsExpandTrigger       ='<tab>'
+let g:UltiSnipsJumpForwardTrigger  = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
+let g:UltiSnipsListSnippets = '<c-e>'
+let g:UltiSnipsSnippetsDir = '~/.vim/ultisnips'
 autocmd BufReadPost *.py call SyntasticCheck()
 
 let g:pymode_folding=0
-let g:pymode_lint_checkers=['pylint', 'pyflakes', 'pep8', 'mccabe']
+let g:pymode_lint_checkers=['pyflakes', 'pep8']
 let g:pymode_rope=0
 let g:syntastic_python_checkers=['python', 'pyflakes', 'pep8', 'flake8']
 
