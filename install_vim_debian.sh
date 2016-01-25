@@ -47,15 +47,16 @@ if [[ ! -d vim ]]; then
 else
     cd vim
     git reset --hard
-    git clean -fd
+    sudo git clean -fd
     git pull
 fi
 
 echo "Configure & compiling VIM..."
+pyenv deactivate
 # Activate 2.7 and 3.4
 pyenv local $LATEST2 $LATEST3
 
-make distclean
+sudo make distclean
 ./configure \
     --enable-fail-if-missing \
     --with-features=huge \
@@ -72,6 +73,14 @@ if [[ $? ]]; then
 
     echo "Installing Vim..."
     sudo checkinstall
+
+	#add python libraries to ld.so.conf.d
+sudo tee -a /etc/ld.so.conf.d/usrlib.conf << EOF
+$PYENV_ROOT/versions/$LATEST2/lib
+$PYENV_ROOT/versions/$LATEST3/lib
+EOF
+
+	sudo ldconfig -v
 
     #if [ ! -d "${HOME}/.local/share/applications" ]; then
     #    mkdir -p "${HOME}/.local/share/applications"
