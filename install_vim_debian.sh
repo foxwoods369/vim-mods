@@ -62,14 +62,14 @@ sudo make distclean
     --with-features=huge \
     --enable-pythoninterp=dynamic \
     --enable-python3interp=dynamic \
-	--enable-rubyinterp \
+    --enable-rubyinterp \
     --enable-multibyte \
     --enable-fontset \
     --enable-gui=gtk2 \
-	--enable-cscope
+    --enable-cscope
 
 if [[ $? ]]; then
-    sudo make
+    make
 
     echo "Installing Vim..."
     sudo checkinstall
