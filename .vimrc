@@ -33,6 +33,7 @@ Plugin 'davidhalter/jedi-vim'
 Plugin 'SirVer/ultisnips'
 Plugin 'jmcomets/vim-pony'
 Plugin 'lambdalisue/vim-pyenv'
+Plugin 'chase/vim-ansible-yaml'
 call vundle#end()
 
 syntax on
@@ -48,11 +49,14 @@ set textwidth=0
 set wrap
 set bs=indent,eol,start
 
-color ansi_blows
+set background=dark
+color skyler_blows
 
 let g:pyindent_open_paren = '&sw'
 let g:pyindent_nested_paren = '&sw'
 let g:pyindent_continue = '&sw'
+
+autocmd BufNewFile,BufRead *.yml set filetype=ansible
 
 set ts=4
 au filetype html set ts=2
@@ -75,15 +79,19 @@ au filetype htmldjango set softtabstop=2
 au filetype javascript set softtabstop=2
 set shiftround
 set autoindent
+
 set foldmethod=indent
 set foldlevel=99
+set foldcolumn=5
+nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+vnoremap <Space> zf
 
 map <c-j> <c-w>j
 map <c-k> <c-w>k
 map <c-l> <c-w>l
 map <c-h> <c-w>h
 
-map <leader>td <Plug>TaskList
+map <leader>tl <Plug>TaskList
 map <leader>u :GundoToggle<CR>
 map <leader>tt :NERDTreeToggle<CR>
 map <leader>a <Esc>:Ack!
@@ -145,9 +153,21 @@ autocmd BufReadPost *.py call SyntasticCheck()
 nnoremap <leader>8 :PymodeLint<CR>
 let g:pymode_folding=0
 let g:pymode_lint_checkers=['pyflakes', 'pep8', 'pylint', 'mccabe']
+let g:pymode_options_max_line_length=120
 let g:pymode_rope=0
-let g:syntastic_python_checkers=['python', 'pyflakes', 'pep8', 'flake8']
 
+let g:syntastic_python_checkers=['python', 'pyflakes', 'pep8', 'flake8']
+let g:syntastic_python_pylint_post_args='--max-line-length=120'
+let g:syntastic_html_checkers=['tidy']
+let g:syntastic_html_tidy_exec='tidy5'
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_auto_loc_list=1
+let g:syntastic_check_on_open=0
+let g:syntastic_check_on_wq=0
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 " py << EOF
 " import os.path
 " import sys
