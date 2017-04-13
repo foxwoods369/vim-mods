@@ -20,7 +20,7 @@ Plugin 'MarcWeber/vim-addon-mw-utils'
 "" Plugin 'honza/vim-snippets'
 " Plugin 'lambdalisue/vim-python-virtualenv'
 Plugin 'klen/python-mode'
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
 Plugin 'fholgado/minibufexpl.vim'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'scrooloose/nerdcommenter'
@@ -34,6 +34,11 @@ Plugin 'SirVer/ultisnips'
 Plugin 'jmcomets/vim-pony'
 Plugin 'lambdalisue/vim-pyenv'
 Plugin 'chase/vim-ansible-yaml'
+Plugin 'ap/vim-css-color'
+Plugin 'hail2u/vim-css3-syntax'
+Plugin 'cakebaker/scss-syntax.vim'
+Plugin 'tpope/vim-markdown'
+Plugin 'suan/vim-instant-markdown'
 call vundle#end()
 
 syntax on
@@ -59,14 +64,20 @@ let g:pyindent_continue = '&sw'
 autocmd BufNewFile,BufRead *.yml set filetype=ansible
 
 set ts=4
+au filetype css set ts=2
+au filetype scss set ts=2
 au filetype html set ts=2
 au filetype htmldjango set ts=2
 au filetype javascript set ts=2
 set shiftwidth=4
+au filetype css set shiftwidth=2
+au filetype scss set shiftwidth=2
 au filetype html set shiftwidth=2
 au filetype htmldjango set shiftwidth=2
 au filetype javascript set shiftwidth=2
 set nu!
+au filetype css set expandtab
+au filetype scss set expandtab
 au filetype python set expandtab
 au filetype html set expandtab
 au filetype htmldjango set expandtab
@@ -74,6 +85,8 @@ au filetype javascript set expandtab
 set smarttab
 au filetype python set textwidth=119
 set softtabstop=4
+au filetype css set softtabstop=2
+au filetype scss set softtabstop=2
 au filetype html set softtabstop=2
 au filetype htmldjango set softtabstop=2
 au filetype javascript set softtabstop=2
@@ -115,6 +128,9 @@ let g:jedi#use_tabs_not_buffers=0
 if jedi#init_python()
 	function! s:jedi_auto_force_py_version() abort
 		let major_version = pyenv#python#get_internal_major_version()
+        if major_version == 3
+            let g:pymode_python='python3'
+        endif
 		call jedi#force_py_version(major_version)
 	endfunction
 	augroup vim-pyenv-custom-augroup
@@ -131,6 +147,7 @@ let g:SuperTabCrMapping = 0
 "autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 "autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 set completeopt=menuone,longest,preview
+"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 "YCM Completion
 " let g:ycm_autoclose_preview_window_after_completion = 1
@@ -185,13 +202,75 @@ imap <S-Tab> <Esc><<i
 nnoremap Q <nop>
 nnoremap <silent> <Leader>/ :nohlsearch<CR>
 
+" Deletes buffers
+map <leader>bd :bp<bar>sp<bar>bn<bar>bd<CR>
+
+" Foundation
+map <leader>fb :!foundation build<CR>
+
 set laststatus=2
 set t_Co=256
 set guifont=DejaVu\ Sans\ Mono\ for\ Powerline
 let g:airline_powerline_fonts=1
 set fillchars+=stl:\ ,stlnc:\
 
+" set guifont=Monospace
 augroup reload_vimrc " {
 	autocmd!
 	autocmd BufWritePost $MYVIMRC source $MYVIMRC
 augroup END " }
+
+" open/refresh in firefox
+nnoremap <leader>ff :exec ':silent !firefox % &'<CR>:redraw!<CR>
+
+autocmd BufWriteCmd *.html,*.css,*.gtpl :call Refresh_firefox()
+function! Refresh_firefox()
+  if &modified
+    write
+    silent !echo  'vimYo = content.window.pageYOffset;
+          \ vimXo = content.window.pageXOffset;
+          \ BrowserReload();
+          \ content.window.scrollTo(vimXo,vimYo);
+          \ repl.quit();'  |
+          \ nc -w 1 localhost 4242 2>&1 > /dev/null
+  endif
+endfunction
+
+command! -nargs=1 Repl silent !echo
+      \ "repl.home();
+      \ content.location.href = '<args>';
+      \ repl.enter(content);
+      \ repl.quit();" |
+      \ nc localhost 4242
+
+nmap <leader>mh :Repl http://
+" mnemonic is MozRepl Http
+nmap <silent> <leader>ml :Repl file:///%:p<CR>
+" mnemonic is MozRepl Local
+nmap <silent> <leader>md :Repl http://localhost/
+" mnemonic is MozRepl Development
+
+nnoremap <silent> <c-f><c-d> :call Firefox_scroll_down()<cr>
+function! Firefox_scroll_down()
+  silent call system("echo 'content.window.scrollByPages(1); repl.quit();' | nc -w 1 localhost 4242")
+endfunction
+
+nnoremap <silent> <c-f><c-u> :call Firefox_scroll_up()<cr>
+function! Firefox_scroll_up()
+  silent call system("echo 'content.window.scrollByPages(-1); repl.quit();' | nc -w 1 localhost 4242")
+endfunction
+
+nnoremap <c-f><c-l> :call Firefox_next_tab()<cr>
+function! Firefox_next_tab()
+  call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; if (index !== tabs.length -1) { tabc.selectedItem = tabs[index + 1]; } else { tabc.selectedItem = tabs[0]; } repl.quit()' | nc -w 1 localhost 4242")
+endfunction
+
+nnoremap <c-f><c-h> :call Firefox_prev_tab()<cr>
+function! Firefox_prev_tab()
+  call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; if (index === 0) { tabc.selectedItem = tabs[tabs.length - 1]; } else { tabc.selectedItem = tabs[index - 1]; } repl.quit()' | nc -w 1 localhost 4242")
+endfunction
+
+nnoremap <c-f><c-w> :call Firefox_close_tab()<cr>
+function! Firefox_close_tab()
+  call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; window.getBrowser().removeTab(tabs[index]); repl.quit()' | nc -w 1 localhost 4242")
+endfunction
