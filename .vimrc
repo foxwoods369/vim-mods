@@ -109,6 +109,8 @@ map <leader>u :GundoToggle<CR>
 map <leader>tt :NERDTreeToggle<CR>
 map <leader>a <Esc>:Ack!
 
+set tags=./tags;$HOME
+
 " let g:gundo_prefer_python3 = 1
 
 au filetype python map <leader>dt :set makeprg=django-admin.py\ test\|:call MakeGreen()<CR>
@@ -223,17 +225,34 @@ augroup END " }
 " open/refresh in firefox
 nnoremap <leader>ff :exec ':silent !firefox % &'<CR>:redraw!<CR>
 
-autocmd BufWriteCmd *.html,*.css,*.gtpl :call Refresh_firefox()
-function! Refresh_firefox()
-  if &modified
-    write
-    silent !echo  'vimYo = content.window.pageYOffset;
-          \ vimXo = content.window.pageXOffset;
-          \ BrowserReload();
-          \ content.window.scrollTo(vimXo,vimYo);
-          \ repl.quit();'  |
-          \ nc -w 1 localhost 4242 2>&1 > /dev/null
+let g:ffrefresh = 1
+
+nnoremap <leader>fd :call FirefoxRefreshToggle()<CR>
+
+function! FirefoxRefreshToggle()
+  if g:ffrefresh
+    let g:ffrefresh = 0
+  else
+    let g:ffrefresh = 1
   endif
+endfunction
+
+autocmd BufWriteCmd *.html,*.css,*.gtpl :call Refresh_firefox_if_modified()
+function! Refresh_firefox_if_modified()
+  if &modified && g:ffrefresh
+    write
+    call Refresh_firefox()
+  endif
+endfunction
+
+function! Refresh_firefox()
+  silent !echo 'vimYo = content.window.pageYOffset;
+              \ vimXo = content.window.pageXOffset;
+              \ BrowserReload();
+              \ content.window.scrollTo(vimXo,vimYo);
+              \ repl.quit();' |
+              \ nc -w 1 localhost 4242 2>&1 > /dev/null
+  :redraw!
 endfunction
 
 command! -nargs=1 Repl silent !echo
@@ -250,27 +269,51 @@ nmap <silent> <leader>ml :Repl file:///%:p<CR>
 nmap <silent> <leader>md :Repl http://localhost/
 " mnemonic is MozRepl Development
 
-nnoremap <silent> <c-f><c-d> :call Firefox_scroll_down()<cr>
+nnoremap <silent> <c-f><c-j> :call Firefox_scroll_down()<cr>
 function! Firefox_scroll_down()
   silent call system("echo 'content.window.scrollByPages(1); repl.quit();' | nc -w 1 localhost 4242")
 endfunction
 
-nnoremap <silent> <c-f><c-u> :call Firefox_scroll_up()<cr>
+nnoremap <silent> <c-f><c-k> :call Firefox_scroll_up()<cr>
 function! Firefox_scroll_up()
   silent call system("echo 'content.window.scrollByPages(-1); repl.quit();' | nc -w 1 localhost 4242")
 endfunction
 
 nnoremap <c-f><c-l> :call Firefox_next_tab()<cr>
 function! Firefox_next_tab()
-  call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; if (index !== tabs.length -1) { tabc.selectedItem = tabs[index + 1]; } else { tabc.selectedItem = tabs[0]; } repl.quit()' | nc -w 1 localhost 4242")
+  silent call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; if (index !== tabs.length - 1) { tabc.selectedItem = tabs[index + 1]; } else { tabc.selectedItem = tabs[0]; } repl.quit()' | nc -w 1 localhost 4242")
 endfunction
 
 nnoremap <c-f><c-h> :call Firefox_prev_tab()<cr>
 function! Firefox_prev_tab()
-  call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; if (index === 0) { tabc.selectedItem = tabs[tabs.length - 1]; } else { tabc.selectedItem = tabs[index - 1]; } repl.quit()' | nc -w 1 localhost 4242")
+  silent call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; if (index === 0) { tabc.selectedItem = tabs[tabs.length - 1]; } else { tabc.selectedItem = tabs[index - 1]; } repl.quit()' | nc -w 1 localhost 4242")
 endfunction
 
 nnoremap <c-f><c-w> :call Firefox_close_tab()<cr>
 function! Firefox_close_tab()
-  call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; window.getBrowser().removeTab(tabs[index]); repl.quit()' | nc -w 1 localhost 4242")
+  silent call system("echo 'var tabc = window.getBrowser().tabContainer; var tabs = tabc.childNodes; var index = tabc.selectedIndex; window.getBrowser().removeTab(tabs[index]); repl.quit()' | nc -w 1 localhost 4242")
 endfunction
+
+nnoremap <c-f><c-i> :call Firefox_prev_window()<cr>
+function! Firefox_prev_window()
+	silent call system("FOCUSID=`xdotool getwindowfocus`; echo 'var windows = Array.from(this.browserWindows()); var index = !this.windowIndex ? 0 : this.windowIndex; if (index === 0) { index = windows.length - 1; } else { index = index - 1; }  windows[index].focus(); this.windowIndex = index; repl.quit()' | nc -w 1 localhost 4242; sleep 0.5; DESKTOP=`xdotool get_desktop_for_window $FOCUSID`; xdotool set_desktop $DESKTOP; xdotool windowfocus --sync $FOCUSID")
+endfunction
+
+nnoremap <c-f><c-o> :call Firefox_next_window()<cr>
+function! Firefox_next_window()
+	silent call system("FOCUSID=`xdotool getwindowfocus`; echo 'var windows = Array.from(this.browserWindows()); var index = !this.windowIndex ? 0 : this.windowIndex; if (index === windows.length - 1) { index = 0; } else { index = index + 1; }  windows[index].focus(); this.windowIndex = index; repl.quit()' | nc -w 1 localhost 4242; sleep 0.5; DESKTOP=`xdotool get_desktop_for_window $FOCUSID`; xdotool set_desktop $DESKTOP; xdotool windowfocus --sync $FOCUSID")
+endfunction
+
+nnoremap <c-f><c-r> :call Refresh_firefox()<cr>
+
+" open/refresh in firefox
+nnoremap <leader>ff :call Firefox_open_current_file()<cr>
+function! Firefox_open_current_file()
+  let focusid = system("xdotool getwindowfocus")
+  :exec ':silent !firefox % &'
+  :redraw!
+  sleep 500m
+  silent call system("xdotool windowfocus --sync " . focusid)
+endfunction
+
+autocmd VimEnter * redraw!
