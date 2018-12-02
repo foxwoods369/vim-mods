@@ -3,7 +3,7 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'foxwoods369/vim-pyenv'
+Plugin 'lambdalisue/vim-pyenv'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-git'
@@ -142,7 +142,7 @@ let g:jedi#use_tabs_not_buffers=0
 if jedi#init_python()
 	function! s:jedi_auto_force_py_version() abort
 		let python_major_version = pyenv#python#get_internal_major_version()
-		call jedi#force_py_version(python_major_version)
+		let g:jedi#force_py_version = python_major_version
 	endfunction
 	augroup vim-pyenv-custom-augroup
 		autocmd! *
