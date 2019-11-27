@@ -33,12 +33,12 @@ fi
 
 # Find out latest stable version
 LATEST2=$(pyenv install -l | grep -E "^  2\.[0-9]+\.[0-9]+$" | tail -1 | sed -e 's/^[[:space:]]+//')
-LATEST3=$(pyenv install -l | grep -E "^  3\.[0-9]+\.[0-9]+$" | tail -1 | sed -e 's/^[[:space:]]+//')
+LATEST3=3.7-dev #$(pyenv install -l | grep -E "^  3\.[0-9]+\.[0-9]+$" | tail -1 | sed -e 's/^[[:space:]]+//')
 
 # Install Python 2 and Python 3
 echo "Install Python $LATEST2 and $LATEST3. It takes minutes so be patient..."
-CONFIGURE_OPTS="--enable-shared --enable-unicode=ucs4" pyenv install $LATEST2
-CONFIGURE_OPTS="--enable-shared" pyenv install $LATEST3
+env PYTHON_CONFIGURE_OPTS="--enable-shared --enable-unicode=ucs4" pyenv install $LATEST2
+env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install $LATEST3
 
 echo "Downloading VIM..."
 if [[ ! -d vim ]]; then

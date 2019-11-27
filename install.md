@@ -6,3 +6,4 @@
 * sudo mv 10-powerline-symbols.conf /etc/fonts/conf.d/
 * install nodejs
 * sudo npm -g install instant-markdown-d
+* compile command-t

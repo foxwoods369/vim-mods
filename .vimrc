@@ -18,7 +18,7 @@ Plugin 'vim-scripts/The-NERD-tree'
 "" Plugin 'garbas/vim-snipmate'
 Plugin 'tomtom/tlib_vim'
 Plugin 'MarcWeber/vim-addon-mw-utils'
-"" Plugin 'honza/vim-snippets'
+Plugin 'honza/vim-snippets'
 "" Plugin 'lambdalisue/vim-python-virtualenv'
 Plugin 'vim-airline/vim-airline'
 Plugin 'fholgado/minibufexpl.vim'
@@ -30,7 +30,7 @@ Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-repeat'
 Plugin 'davidhalter/jedi-vim'
 Plugin 'python-mode/python-mode'
-"" Plugin 'valloric/youcompleteme'
+"Plugin 'valloric/youcompleteme'
 Plugin 'SirVer/ultisnips'
 Plugin 'jmcomets/vim-pony'
 Plugin 'chase/vim-ansible-yaml'
@@ -133,8 +133,10 @@ set shellredir=>%s\ 2>&1
 
 let python_major_version = pyenv#python#get_internal_major_version()
 if python_major_version == 3
+	let g:UltiSnipsUsePythonVersion = 3
 	let g:pymode_python='python3'
 else
+	let g:UltiSnipsUsePythonVersion = 2
 	let g:pymode_python='python'
 endif
 
@@ -151,7 +153,7 @@ if jedi#init_python()
 	augroup END
 endif
 
-" au FileType python set omnifunc=pythoncomplete#Complete
+au FileType python set omnifunc=jedi#completions
 let g:SuperTabDefaultCompletionType="<C-n>"
 let g:SuperTabClosePreviewOnPopupClose=1
 let g:SuperTabCrMapping = 0
@@ -161,21 +163,21 @@ set completeopt=menuone,longest,preview
 "inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 "YCM Completion
-" let g:ycm_autoclose_preview_window_after_completion = 1
-" let g:ycm_autoclose_preview_window_after_insertion = 1
-" let g:ycm_collect_identifiers_from_tags_files = 1
-" let g:ycm_seed_identifers_with_syntax = 1
-" let g:ycm_complete_in_comments = 1
-" let g:ycm_complete_in_strings = 1 
-" let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-" let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-" nnoremap <leader>g :YcmCompleter GoTo<CR>
+"let g:ycm_autoclose_preview_window_after_completion = 1
+"let g:ycm_autoclose_preview_window_after_insertion = 1
+"let g:ycm_collect_identifiers_from_tags_files = 1
+"let g:ycm_seed_identifers_with_syntax = 1
+"let g:ycm_complete_in_comments = 1
+"let g:ycm_complete_in_strings = 1 
+"let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+"let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+"nnoremap <leader>g :YcmCompleter GoTo<CR>
 
 let g:UltiSnipsExpandTrigger       ='<tab>'
 let g:UltiSnipsJumpForwardTrigger  = '<tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 let g:UltiSnipsListSnippets = '<c-e>'
-let g:UltiSnipsSnippetsDir = '~/.vim/ultisnips'
+"let g:UltiSnipsSnippetsDir = '~/.vim/ultisnips'
 autocmd BufReadPost *.py call SyntasticCheck()
 
 nnoremap <leader>8 :PymodeLint<CR>
