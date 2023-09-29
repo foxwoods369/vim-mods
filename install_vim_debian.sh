@@ -15,7 +15,7 @@ sudo apt-get install -y -q \
 # vim requirements
 sudo apt-get install -y -q \
     libncurses5-dev libgnome2-dev libgnomeui-dev \
-    libgtk2.0-dev libatk1.0-dev libbonoboui2-dev \
+    libgtk-4-dev libatk1.0-dev libbonoboui2-dev \
     libcairo2-dev libx11-dev libxpm-dev libxt-dev \
     liblua5.2-dev lua5.2 ruby-dev ruby
 # pyenv requirements (to compile Python)
@@ -32,8 +32,8 @@ if [[ $(which pyenv >/dev/null 2>&1) ]]; then
 fi
 
 # Find out latest stable version
-LATEST2=$(pyenv install -l | grep -E "^  2\.[0-9]+\.[0-9]+$" | tail -1 | sed -e 's/^[[:space:]]+//')
-LATEST3=3.7-dev #$(pyenv install -l | grep -E "^  3\.[0-9]+\.[0-9]+$" | tail -1 | sed -e 's/^[[:space:]]+//')
+LATEST2=$(pyenv install -l | grep -E "^  2\.[0-9]+\.[0-9]+$" | tail -1 | sed -re 's/^\s+//')
+LATEST3=$(pyenv install -l | grep -E "^  3\.[0-9]+\.[0-9]+$" | tail -1 | sed -re 's/^\s+//')
 
 # Install Python 2 and Python 3
 echo "Install Python $LATEST2 and $LATEST3. It takes minutes so be patient..."
@@ -65,7 +65,7 @@ sudo make distclean
     --enable-rubyinterp \
     --enable-multibyte \
     --enable-fontset \
-    --enable-gui=gtk2 \
+    --enable-gui=gtk4 \
     --enable-cscope
 
 if [[ $? ]]; then
